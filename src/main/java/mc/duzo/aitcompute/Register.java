@@ -1,7 +1,10 @@
 package mc.duzo.aitcompute;
 
 import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
-import io.wispforest.owo.registration.reflect.ItemRegistryContainer;
+import dev.amble.ait.core.AITItemGroups;
+import dev.amble.lib.item.AItem;
+import dev.amble.lib.item.AItemSettings;
+import mc.duzo.aitcompute.registry.ItemRegistryContainer;
 import mc.duzo.aitcompute.common.upgrade.TurtleVortex;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
@@ -27,8 +30,8 @@ public class Register {
 		return output;
 	}
 
-	public static class Items implements ItemRegistryContainer {
-		// public static final Item VORTEX_UPGRADE = register("vortex_upgrade", new Item(new OwoItemSettings().group(AITMod.AIT_ITEM_GROUP).maxCount(1)));
+	public static class Items extends ItemRegistryContainer {
+		public static final Item VORTEX_UPGRADE = register("vortex_upgrade", new Item(new AItemSettings().group(AITItemGroups.MAIN).maxCount(1)));
 
 		public static <T extends Item> T register(String name, T entry) {
 			return Register.register(Registries.ITEM, name, entry);

@@ -5,15 +5,15 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
-import loqor.ait.api.KeyedTardisComponent;
-import loqor.ait.api.TardisComponent;
-import loqor.ait.core.AITItems;
-import loqor.ait.core.item.KeyItem;
-import loqor.ait.core.tardis.Tardis;
-import loqor.ait.core.tardis.dim.TardisDimension;
-import loqor.ait.core.tardis.manager.ServerTardisManager;
-import loqor.ait.data.properties.Value;
-import loqor.ait.registry.impl.TardisComponentRegistry;
+import dev.amble.ait.api.tardis.KeyedTardisComponent;
+import dev.amble.ait.api.tardis.TardisComponent;
+import dev.amble.ait.api.tardis.link.v2.Linkable;
+import dev.amble.ait.api.tardis.link.v2.TardisRef;
+import dev.amble.ait.core.item.KeyItem;
+import dev.amble.ait.core.tardis.Tardis;
+import dev.amble.ait.core.tardis.manager.ServerTardisManager;
+import dev.amble.ait.data.properties.Value;
+import dev.amble.ait.registry.impl.TardisComponentRegistry;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,15 +41,19 @@ public class VortexPeripheral implements IPeripheral {
 		return this.turtle;
 	}
 
-	private boolean hasKey(int slot, UUID tardis) {
+	private boolean hasKey(int slot, UUID tardisId) {
 		ItemStack stack = this.turtle.getInventory().getStack(slot);
-		if (!(stack.getItem() instanceof KeyItem)) return false;
 
-		if (stack.isOf(AITItems.SKELETON_KEY)) return true;
+		if (!(stack.getItem() instanceof KeyItem key))
+			return false;
 
-		Tardis found = KeyItem.getTardis(this.turtle.getLevel(), tardis);
-		return tardis.equals(found.getUuid());
+		if (key.hasProtocol(KeyItem.Protocols.SKELETON))
+			return true;
+
+		Tardis found = KeyItem.getTardisStatic(this.turtle.getLevel(), stack);
+		return found != null && tardisId.equals(found.getUuid());
 	}
+
 	private Tardis getTardis(UUID tardis) {
 		return ServerTardisManager.getInstance().demandTardis(this.turtle.getLevel().getServer(), tardis);
 	}
@@ -60,11 +64,15 @@ public class VortexPeripheral implements IPeripheral {
 	 * @return string uuid, or empty if invalid
 	 */
 	@LuaFunction
-	public final String findTardisId() {
-		Tardis found = TardisDimension.get(turtle.getLevel()).orElse(null);
-		if (found == null) return "";
-
-		return found.getUuid().toString();
+	public final String findTardisId(Linkable linkable) {
+		if (linkable != null && linkable.isLinked()) {
+			TardisRef ref = linkable.tardis();
+			if (ref != null && ref.isPresent()) {
+				// Return the UUID of the linked Tardis
+				return ref.get().getUuid().toString();
+			}
+		}
+		return "";
 	}
 
 	/**

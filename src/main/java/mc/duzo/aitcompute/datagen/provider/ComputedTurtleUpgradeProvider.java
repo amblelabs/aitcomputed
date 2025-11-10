@@ -2,7 +2,7 @@ package mc.duzo.aitcompute.datagen.provider;
 
 import dan200.computercraft.api.turtle.TurtleUpgradeDataProvider;
 import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
-import loqor.ait.core.AITItems;
+import dev.amble.ait.core.AITItems;
 import mc.duzo.aitcompute.Computed;
 import mc.duzo.aitcompute.Register;
 import net.minecraft.data.DataOutput;
