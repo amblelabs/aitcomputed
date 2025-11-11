@@ -1,6 +1,6 @@
 package mc.duzo.aitcompute.datagen.provider.lang;
 
-import mc.duzo.aitcompute.Computed;
+import mc.duzo.aitcompute.ComputedMod;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.block.Block;
@@ -27,7 +27,7 @@ public class LanguageProvider extends FabricLanguageProvider {
             translationBuilder.add(key, translations.get(key));
         }
 
-        dataGenerator.getModContainer().findPath("assets/" + Computed.MOD_ID + "/lang/" + languageType.name().toLowerCase() + ".existing.json").ifPresent(existingFilePath -> {
+        dataGenerator.getModContainer().findPath("assets/" + ComputedMod.MOD_ID + "/lang/" + languageType.name().toLowerCase() + ".existing.json").ifPresent(existingFilePath -> {
             try {
                 translationBuilder.add(existingFilePath);
             } catch (Exception e) {

@@ -1,16 +1,19 @@
 package mc.duzo.aitcompute;
 
+import dev.amble.lib.container.RegistryContainer;
+import mc.duzo.aitcompute.registry.ComputedItems;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public class Computed implements ModInitializer {
+public class ComputedMod implements ModInitializer {
 	public static final String MOD_ID = "aitcompute";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	private static MinecraftServer SERVER;
@@ -20,8 +23,8 @@ public class Computed implements ModInitializer {
 	 */
 	@Override
 	public void onInitialize() {
+		RegistryContainer.register(ComputedItems.class, MOD_ID);
 		Register.initialize();
-
 		registerEvents();
 	}
 
@@ -39,6 +42,10 @@ public class Computed implements ModInitializer {
 				SERVER = server;
 			}
 		});
+	}
+
+	public static Identifier id(String s) {
+		return new Identifier(MOD_ID, s);
 	}
 
 	public static Optional<MinecraftServer> getServer() {

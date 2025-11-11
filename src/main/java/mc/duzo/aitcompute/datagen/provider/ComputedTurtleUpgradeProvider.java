@@ -3,7 +3,7 @@ package mc.duzo.aitcompute.datagen.provider;
 import dan200.computercraft.api.turtle.TurtleUpgradeDataProvider;
 import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
 import dev.amble.ait.core.AITItems;
-import mc.duzo.aitcompute.Computed;
+import mc.duzo.aitcompute.ComputedMod;
 import mc.duzo.aitcompute.Register;
 import net.minecraft.data.DataOutput;
 import net.minecraft.util.Identifier;
@@ -21,6 +21,6 @@ public class ComputedTurtleUpgradeProvider extends TurtleUpgradeDataProvider {
 	}
 
 	private static Identifier id(String id) {
-		return new Identifier(Computed.MOD_ID, id);
+		return new Identifier(ComputedMod.MOD_ID, id);
 	}
 }

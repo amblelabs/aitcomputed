@@ -4,7 +4,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.api.turtle.*;
 import dev.amble.ait.api.tardis.KeyedTardisComponent;
 import dev.amble.ait.api.tardis.TardisComponent;
 import dev.amble.ait.api.tardis.link.v2.Linkable;
@@ -21,24 +21,12 @@ import java.util.UUID;
 
 public class VortexPeripheral implements IPeripheral {
 	private final ITurtleAccess turtle;
+	private final boolean advanced;
 
-	public VortexPeripheral(ITurtleAccess turtle) {
+	// Fixed constructor
+	public VortexPeripheral(boolean advanced, ITurtleAccess turtle) {
+		this.advanced = advanced;
 		this.turtle = turtle;
-	}
-	@Override
-	public String getType() {
-		return "vortex";
-	}
-
-	@Override
-	public boolean equals(@Nullable IPeripheral other) {
-		return this == other || (other instanceof VortexPeripheral peripheral && turtle == peripheral.turtle);
-	}
-
-	@Nullable
-	@Override
-	public Object getTarget() {
-		return this.turtle;
 	}
 
 	private boolean hasKey(int slot, UUID tardisId) {
@@ -139,5 +127,16 @@ public class VortexPeripheral implements IPeripheral {
 
 		Tardis tardis = getTardis(tardisId);
 		tardis.travel().speed(tardis.travel().speed());
+	}
+
+	@Override
+	public String getType() {
+		return "aitcomputed:vortex";
+	}
+
+	@Override
+	public boolean equals(@Nullable IPeripheral other) {
+		if (other == null) return false;
+		return other.getType().equals(this.getType());
 	}
 }

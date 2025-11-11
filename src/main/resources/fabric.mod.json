@@ -18,7 +18,7 @@
       "mc.duzo.aitcompute.client.ComputedClient"
     ],
     "main": [
-      "mc.duzo.aitcompute.Computed"
+      "mc.duzo.aitcompute.ComputedMod"
     ],
     "fabric-datagen": [
       "mc.duzo.aitcompute.datagen.ComputedDataGenerator"
