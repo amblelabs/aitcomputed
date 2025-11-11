@@ -1,4 +1,4 @@
 {
   "parent": "computercraft:block/turtle_upgrade_base_right",
-  "textures": {"texture": "aitcompute:block/turtle_vortex_face"}
+  "textures": {"texture": "aitcompute:block/vortex_face"}
 }

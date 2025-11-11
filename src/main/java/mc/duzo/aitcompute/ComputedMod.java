@@ -1,6 +1,9 @@
 package mc.duzo.aitcompute;
 
 import dev.amble.lib.container.RegistryContainer;
+import mc.duzo.aitcompute.common.component.VortexCommunicator;
+import mc.duzo.aitcompute.registry.ComputedBlockEntityTypes;
+import mc.duzo.aitcompute.registry.ComputedBlocks;
 import mc.duzo.aitcompute.registry.ComputedItems;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -23,9 +26,13 @@ public class ComputedMod implements ModInitializer {
 	 */
 	@Override
 	public void onInitialize() {
+		RegistryContainer.register(ComputedBlockEntityTypes.class, MOD_ID);
 		RegistryContainer.register(ComputedItems.class, MOD_ID);
+		RegistryContainer.register(ComputedBlocks.class, MOD_ID);
 		Register.initialize();
 		registerEvents();
+
+		VortexCommunicator.register();
 	}
 
 	private void registerEvents() {

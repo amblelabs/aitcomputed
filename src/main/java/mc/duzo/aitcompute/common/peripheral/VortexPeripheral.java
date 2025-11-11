@@ -12,11 +12,18 @@ import dev.amble.ait.api.tardis.link.v2.TardisRef;
 import dev.amble.ait.core.item.KeyItem;
 import dev.amble.ait.core.tardis.Tardis;
 import dev.amble.ait.core.tardis.manager.ServerTardisManager;
+import dev.amble.ait.core.util.WorldUtil;
 import dev.amble.ait.data.properties.Value;
 import dev.amble.ait.registry.impl.TardisComponentRegistry;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
 public class VortexPeripheral implements IPeripheral {
@@ -99,7 +106,7 @@ public class VortexPeripheral implements IPeripheral {
 	public final <T> String get(IArguments args) throws LuaException {
 		UUID tardisId = UUID.fromString(args.getString(0));
 		int slot = this.turtle.getSelectedSlot();
-		if (!hasKey(slot, tardisId)) return "";
+		if (!hasKey(slot, tardisId)) return "No Key Found";
 
 		Tardis tardis = getTardis(tardisId); // poo
 		TardisComponent.IdLike id = TardisComponentRegistry.getInstance().get(args.getString(1).toUpperCase());
@@ -115,28 +122,139 @@ public class VortexPeripheral implements IPeripheral {
 		return json;
 	}
 
+	@LuaFunction
+	public final <T> String openDoor(IArguments args) throws LuaException {
+		UUID tardisId = UUID.fromString(args.getString(0));
+		int slot = this.turtle.getSelectedSlot();
+		if (!hasKey(slot, tardisId)) return "No Key Found";
+
+		Tardis tardis = getTardis(tardisId); // poo
+
+		tardis.door().openDoors();
+
+        return "Doors Opened";
+    }
+
+	@LuaFunction
+	public final <T> String closeDoor(IArguments args) throws LuaException {
+		UUID tardisId = UUID.fromString(args.getString(0));
+		int slot = this.turtle.getSelectedSlot();
+		if (!hasKey(slot, tardisId)) return "No Key Found";
+
+		Tardis tardis = getTardis(tardisId); // poo
+
+		tardis.door().closeDoors();
+
+		return "Doors Closed";
+	}
+
+	@LuaFunction
+	public final <T> String lockDoor(IArguments args) throws LuaException {
+		UUID tardisId = UUID.fromString(args.getString(0));
+		int slot = this.turtle.getSelectedSlot();
+		if (!hasKey(slot, tardisId)) return "No Key Found";
+
+		Tardis tardis = getTardis(tardisId); // poo
+
+		tardis.door().setLocked(true);
+
+		return "Doors Locked";
+	}
+
+	@LuaFunction
+	public final <T> String unlockDoor(IArguments args) throws LuaException {
+		UUID tardisId = UUID.fromString(args.getString(0));
+		int slot = this.turtle.getSelectedSlot();
+		if (!hasKey(slot, tardisId)) return "No Key Found";
+
+		Tardis tardis = getTardis(tardisId); // poo
+
+		tardis.door().setLocked(false);
+		return "Doors Unlocked";
+	}
+
 	/**
-	 * Updates the tardis' flight state
-	 * @param args tardis: str
+	 * sets destination of a tardis
+	 * @param args uuid: str, x: int, y: int, z: int, rotation: str, dimension: str
+	 */
+
+	@LuaFunction
+	public final <T> String setDestination(IArguments args) throws LuaException {
+		UUID tardisId = UUID.fromString(args.getString(0));
+		int slot = this.turtle.getSelectedSlot();
+		if (!hasKey(slot, tardisId)) return "No Key Found";
+
+		Tardis tardis = getTardis(tardisId); // poo
+
+		// grab coords
+		int x, y, z;
+		try {
+			x = args.getInt(1);
+			y = args.getInt(2);
+			z = args.getInt(3);
+		} catch (NumberFormatException e) {
+			throw new LuaException("Coordinates must be valid integers");
+		}
+
+		BlockPos destination = new BlockPos(x, y, z);
+
+		// grab rotation
+		byte rotation = parseDirection(args.getString(4));
+
+		//grab dimensions
+		String dimId = args.getString(5);
+		List<ServerWorld> dims = WorldUtil.getTravelWorlds();
+		ServerWorld destWorld = dims.stream().filter(world -> world.getRegistryKey().getValue().toString().equals(dimId)).findFirst().orElse(null);
+
+        if (destWorld == null) {
+			throw new LuaException("Invalid or locked dimension: " + dimId);
+		}
+
+		tardis.travel().destination(cached ->
+				cached.world(destWorld).pos(destination).rotation(rotation)
+		);
+
+		return "Destination set to " + dimId + " @ " + destination.toShortString() + " | rotation: " + rotation;
+	}
+
+	/**
+	 * enables autopilot and attempts a takeoff
+	 * @param args uuid: str
 	 */
 	@LuaFunction
-	public final void tryFly(IArguments args) throws LuaException {
+	public final void startStableFlight(IArguments args) throws LuaException {
 		UUID tardisId = UUID.fromString(args.getString(0));
 		int slot = this.turtle.getSelectedSlot();
 		if (!hasKey(slot, tardisId)) return;
 
 		Tardis tardis = getTardis(tardisId);
-		tardis.travel().speed(tardis.travel().speed());
+		tardis.travel().autopilot(true);
+		tardis.travel().dematerialize();
 	}
 
 	@Override
 	public String getType() {
-		return "aitcomputed:vortex";
+		return "aitcomputed:vortex_upgrade";
 	}
 
 	@Override
 	public boolean equals(@Nullable IPeripheral other) {
 		if (other == null) return false;
 		return other.getType().equals(this.getType());
+	}
+
+	private static byte parseDirection(String dir) throws LuaException {
+		return switch (dir.toLowerCase()) {
+			case "north" -> 0;
+			case "north east", "northeast" -> 1;
+			case "east" -> 2;
+			case "south east", "southeast" -> 3;
+			case "south" -> 4;
+			case "south west", "southwest" -> 5;
+			case "west" -> 6;
+			case "north west", "northwest" -> 7;
+			default -> throw new LuaException("Invalid direction: " + dir
+					+ ". Expected one of north, north east, east, south east, south, south west, west, north west");
+		};
 	}
 }

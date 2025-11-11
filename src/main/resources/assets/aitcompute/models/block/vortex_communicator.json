@@ -1,0 +1,4 @@
+{
+  "parent": "computercraft:block/modem",
+  "textures": {"back": "computercraft:block/modem_back", "front": "aitcompute:block/vortex_face"}
+}
