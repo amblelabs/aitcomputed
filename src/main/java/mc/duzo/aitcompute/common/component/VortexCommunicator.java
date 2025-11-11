@@ -7,6 +7,7 @@ import dan200.computercraft.api.peripheral.PeripheralLookup;
 import dan200.computercraft.api.lua.LuaFunction;
 import dev.amble.ait.api.tardis.KeyedTardisComponent;
 import dev.amble.ait.api.tardis.TardisComponent;
+import dev.amble.ait.core.AITSounds;
 import dev.amble.ait.core.tardis.Tardis;
 import dev.amble.ait.core.tardis.manager.ServerTardisManager;
 import dev.amble.ait.core.util.WorldUtil;
@@ -16,6 +17,7 @@ import mc.duzo.aitcompute.registry.ComputedBlockEntityTypes;
 import mc.duzo.aitcompute.registry.blockentities.VortexCommunicatorBlockEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
@@ -263,6 +265,127 @@ public class VortexCommunicator {
 
             tardis.travel().autopilot(true);
             tardis.travel().dematerialize();
+        }
+
+        @LuaFunction
+        public final void landTardis(IArguments args) throws LuaException {
+            UUID tardisId = UUID.fromString(args.getString(0));
+
+            Tardis tardis = getTardis(tardisId);
+            if (tardis == null) throw new LuaException("Invalid TARDIS UUID.");
+
+            tardis.travel().rematerialize();
+        }
+
+        @LuaFunction
+        public final boolean isInFlight(IArguments args) throws LuaException {
+            UUID tardisId = UUID.fromString(args.getString(0));
+
+            Tardis tardis = getTardis(tardisId);
+            if (tardis == null) throw new LuaException("Invalid TARDIS UUID.");
+
+            return !tardis.travel().isLanded();
+        }
+
+        @LuaFunction
+        public final boolean isDoorOpen(IArguments args) throws LuaException {
+            UUID tardisId = UUID.fromString(args.getString(0));
+
+            Tardis tardis = getTardis(tardisId);
+            if (tardis == null) throw new LuaException("Invalid TARDIS UUID.");
+
+            return tardis.door().isOpen();
+        }
+
+        @LuaFunction
+        public final boolean isDoorLocked(IArguments args) throws LuaException {
+            UUID tardisId = UUID.fromString(args.getString(0));
+
+            Tardis tardis = getTardis(tardisId);
+            if (tardis == null) throw new LuaException("Invalid TARDIS UUID.");
+
+            return tardis.door().locked();
+        }
+
+        @LuaFunction
+        public final double getFuelLevel(IArguments args) throws LuaException {
+            UUID tardisId = UUID.fromString(args.getString(0));
+
+            Tardis tardis = getTardis(tardisId);
+            if (tardis == null) throw new LuaException("Invalid TARDIS UUID.");
+
+            return tardis.fuel().getCurrentFuel();
+        }
+
+        @LuaFunction
+        public final double getMaxFuelCapacity(IArguments args) throws LuaException {
+            UUID tardisId = UUID.fromString(args.getString(0));
+
+            Tardis tardis = getTardis(tardisId);
+            if (tardis == null) throw new LuaException("Invalid TARDIS UUID.");
+
+            return tardis.fuel().getMaxFuel();
+        }
+
+        @LuaFunction
+        public final boolean setRefuel(IArguments args) throws LuaException {
+            UUID tardisId = UUID.fromString(args.getString(0));
+
+            Tardis tardis = getTardis(tardisId);
+            if (tardis == null) throw new LuaException("Invalid TARDIS UUID.");
+
+            tardis.setRefueling(args.getBoolean(1));
+
+            return args.getBoolean(1);
+        }
+
+        @LuaFunction
+        public final void randomiseCoords(IArguments args) throws LuaException {
+            UUID tardisId = UUID.fromString(args.getString(0));
+
+            Tardis tardis = getTardis(tardisId);
+            if (tardis == null) throw new LuaException("Invalid TARDIS UUID.");
+            BlockPos pos = new BlockPos(
+                    (int) (Math.random() * 40001 - 20000),
+                    64,
+                    (int) (Math.random() * 40001 - 20000)
+            );
+
+            tardis.travel().destination().pos(pos);
+        }
+
+        @LuaFunction
+        public final void fastReturn(IArguments args) throws LuaException {
+            UUID tardisId = UUID.fromString(args.getString(0));
+
+            Tardis tardis = getTardis(tardisId);
+            if (tardis == null) throw new LuaException("Invalid TARDIS UUID.");
+
+            BlockPos previous = tardis.travel().previousPosition().getPos();
+            if (previous == null) throw new LuaException("No previous position recorded.");
+
+            tardis.travel().destination().pos(previous);
+        }
+
+        @LuaFunction
+        public final boolean isPowered(IArguments args) throws LuaException {
+            UUID tardisId = UUID.fromString(args.getString(0));
+
+            Tardis tardis = getTardis(tardisId);
+            if (tardis == null) throw new LuaException("Invalid TARDIS UUID.");
+
+            return tardis.fuel().hasPower();
+        }
+
+        @LuaFunction
+        public final void togglePower(IArguments args) throws LuaException {
+            UUID tardisId = UUID.fromString(args.getString(0));
+
+            Tardis tardis = getTardis(tardisId);
+            if (tardis == null) throw new LuaException("Invalid TARDIS UUID.");
+
+            tardis.fuel().togglePower();
+            blockEntity.getWorld().playSound(null, blockEntity.getPos(), AITSounds.MAD_MAN_MUSIC, SoundCategory.BLOCKS, 1.0f, 1.0f);
         }
 
         @Override
