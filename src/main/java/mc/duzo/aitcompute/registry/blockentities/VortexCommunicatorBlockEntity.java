@@ -18,14 +18,14 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class VortexCommunicatorBlockEntity extends ABlockEntity implements AnimatedBlockEntity {
-    private static final BedrockModelReference MODEL = new BedrockModelReference(ComputedMod.MOD_ID, "test_block");
+    private static final BedrockModelReference MODEL = new BedrockModelReference(ComputedMod.MOD_ID, "vortex_communicator");
 
     public VortexCommunicatorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
     public VortexCommunicatorBlockEntity(BlockPos pos, BlockState state) {
-        this(ComputedBlockEntityTypes.TEST_BLOCK, pos, state);
+        this(ComputedBlockEntityTypes.VORTEX_COMMUNICATOR, pos, state);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class VortexCommunicatorBlockEntity extends ABlockEntity implements Anima
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (world.isClient) return ActionResult.SUCCESS;
 
-        this.playAnimation(new BedrockAnimationReference("test_block", "use"));
+        this.playAnimation(new BedrockAnimationReference("vortex_communicator", "use"));
         return ActionResult.SUCCESS;
     }
 

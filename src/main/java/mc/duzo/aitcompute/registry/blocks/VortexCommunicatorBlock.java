@@ -8,10 +8,10 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 
 
-public class VortexCommunicatorBlock implements BlockEntityProvider {
+public class VortexCommunicatorBlock extends Block implements BlockEntityProvider {
 
     public VortexCommunicatorBlock(ABlockSettings settings) {
-        super();
+        super(settings);
     }
 
     @Override

@@ -41,6 +41,6 @@ public class VortexCommunicator {
     }
 
     public static void register() {
-        PeripheralLookup.get().registerForBlockEntity((f, s) -> new VortexCommunicatorPeripheral(f), ComputedBlockEntityTypes.TEST_BLOCK);
+        PeripheralLookup.get().registerForBlockEntity((f, s) -> new VortexCommunicatorPeripheral(f), ComputedBlockEntityTypes.VORTEX_COMMUNICATOR);
     }
 }

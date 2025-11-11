@@ -8,5 +8,5 @@ import net.minecraft.block.entity.BlockEntityType;
 
 public class ComputedBlockEntityTypes implements BlockEntityContainer {
     @HasBedrockModel
-    public static BlockEntityType<VortexCommunicatorBlockEntity> TEST_BLOCK = FabricBlockEntityTypeBuilder.create(VortexCommunicatorBlockEntity::new, ComputedBlocks.VORTEX_COMMUNICATOR).build();
+    public static BlockEntityType<VortexCommunicatorBlockEntity> VORTEX_COMMUNICATOR = FabricBlockEntityTypeBuilder.create(VortexCommunicatorBlockEntity::new, ComputedBlocks.VORTEX_COMMUNICATOR).build();
 }
