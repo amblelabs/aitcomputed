@@ -6,5 +6,5 @@ import mc.duzo.aitcompute.registry.blocks.VortexCommunicatorBlock;
 import net.minecraft.block.Block;
 
 public class ComputedBlocks extends BlockContainer {
-    public static final Block VORTEX_COMMUNICATOR = new VortexCommunicatorBlock(ABlockSettings.create());
+    public static final Block VORTEX_COMMUNICATOR = new VortexCommunicatorBlock(ABlockSettings.create().nonOpaque().strength(3.0f).dynamicBounds());
 }

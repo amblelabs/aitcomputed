@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=down": {"model": "aitcompute:block/vortex_communicator", "x": 90, "y": 0},
+    "facing=east": {"model": "aitcompute:block/vortex_communicator", "x": 0, "y": 90},
+    "facing=north": {"model": "aitcompute:block/vortex_communicator", "x": 0, "y": 0},
+    "facing=south": {"model": "aitcompute:block/vortex_communicator", "x": 0, "y": 180},
+    "facing=up": {"model": "aitcompute:block/vortex_communicator", "x": 270, "y": 0},
+    "facing=west": {"model": "aitcompute:block/vortex_communicator", "x": 0, "y": 270}
+  }
+}
